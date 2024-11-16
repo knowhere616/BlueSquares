@@ -16,5 +16,5 @@ The core problems for which we will see solutions include the following:
 
 We select the VRP problem, which is a subset of shortest path problem.
 
-#November 2024 
+# November 2024 
 We will develop simple solutions programatically, with mere input interface, so we will become familiar with Software engineering, Git software and Github platform
