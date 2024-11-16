@@ -22,6 +22,8 @@ public class Main {
         System.out.println("Enter the starting node:");
         int startNode = scanner.nextInt();
 
+        scanner.close(); // we close the scanner after the last input!
+
         List<Integer> route = optimizer.nearestNeighbor(graph, startNode);
         System.out.println("Optimized route: " + route);
     }
