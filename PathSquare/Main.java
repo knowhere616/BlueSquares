@@ -22,10 +22,12 @@ public class Main {
 
         Graph graph = new Graph(nodes);
 
-        System.out.print("Enter the number of vehicles: ")
-        int numVehicles = scanner.nextInt();
+        // Initialize the fleet
+        Fleet fleet = new Fleet();
+        fleet.initializeFleet(scanner);
 
-<<<<<<< HEAD
+        int numVehicles = fleet.getVehicles().size();
+
         System.out.print("Enter the depot node (starting point): ");
         int depot = scanner.nextInt();
 
@@ -42,13 +44,12 @@ public class Main {
             return;
         }
         
+        // Το όρισμα numVehicles θέλει αλλαγη; - fleet ή vehicle;
         List<List<Integer>> routes = algorithm.solve(graph, numVehicles, depot);
         System.out.println("Optimized Routes: " + routes);
-=======
         scanner.close(); // we close the scanner after the last input!
 
         List<Integer> route = optimizer.nearestNeighbor(graph, startNode);
         System.out.println("Optimized route: " + route);
->>>>>>> fa31012779f93b9eecbb8e28fa6f063e86665acf
     }
 }
