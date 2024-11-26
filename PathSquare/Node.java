@@ -1,19 +1,61 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class Node {
-    private final int id;
-    private final double x, y;
+    private int id;
+    private String address;
+    private double latitude;
+    private double longitude;
+    private Map<Integer, Double> distances; // Stores distances to other nodes by ID
 
-    public Node(int id, double x, double y) {
+    // Constructor for manual input (distances known)
+    public Node(int id) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.distances = new HashMap<>();
     }
 
-    public double distanceTo(Node other) {
-        //υπολογισμός ευκλείδιας απόστασης μεταξύ κόμβων
-        return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
+    // Constructor for real addresses (coordinates known)
+    public Node(int id, String address, double latitude, double longitude) {
+        this.id = id;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.distances = new HashMap<>();
     }
 
+    // Add a distance to another node
+    public void addDistance(int nodeId, double distance) {
+        distances.put(nodeId, distance);
+    }
+
+    // Get distance to another node
+    public double getDistanceTo(int nodeId) {
+        return distances.getOrDefault(nodeId, Double.MAX_VALUE); // Return large value if no distance found
+    }
+
+    // Getters
     public int getId() {
         return id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public String toString() {
+        if (address != null) {
+            return "Node " + id + ": " + address + " (" + latitude + ", " + longitude + ")";
+        } else {
+            return "Node " + id + ": (Manually Entered)";
+        }
     }
 }

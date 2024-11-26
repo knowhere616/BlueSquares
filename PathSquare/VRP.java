@@ -1,61 +1,54 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class VRP implements RoutingAlgorithm {
-
-    @Override
-    // Μήπως πρέπει να περάσουμε τον στόλο ως όρισμα;
-    public List<List<Integer>> solve(Graph graph, int numVehicles, int depot) {
-        int numNodes = graph.getNumberOfNodes();
-        boolean[] visited = new boolean[numNodes];
-        visited[depot] = true;
-
-        // Get the vehicles of the fleet
-        Fleet fleet = new Fleet();
+public class VRP {
+    // Solves the VRP problem using pre-defined distances
+    public List<List<Node>> solve(Fleet fleet, List<Node> nodes, Node depot) {
+        List<List<Node>> routes = new ArrayList<>();
         List<Vehicle> vehicles = fleet.getVehicles();
+        List<Node> unvisitedNodes = new ArrayList<>(nodes);
+        unvisitedNodes.remove(depot); // Exclude the depot from unvisited nodes
 
-        List<List<Integer>> routes = new ArrayList<>();
-
-        for (int i = 0; i < vehicles.size(); i++) {
-            routes.add(new ArrayList<>());
-            routes.get(i).add(depot);
+        // Initialize routes for each vehicle
+        for (Vehicle vehicle : vehicles) {
+            List<Node> route = new ArrayList<>();
+            route.add(depot); // Start each route at the depot
+            routes.add(route);
         }
 
         for (int i = 0; i < vehicles.size(); i++) {
-            int currentNode = depot;
             Vehicle vehicle = vehicles.get(i);
+            List<Node> route = routes.get(i);
+            Node currentNode = depot;
 
-            while (true) {
-
-                // Return to depot and reload if currentload is 0
-                if (vehicle.getCurrentLoad() == 0) {
-                    routes.get(i).add(depot);
-                    vehicle.resetVehicle(); // restock
-                    currentNode = depot;
-                }
-
-                int nextNode = -1;
+            while (!unvisitedNodes.isEmpty() && vehicle.getCurrentLoad() > 0) {
+                Node nearestNode = null;
                 double shortestDistance = Double.MAX_VALUE;
 
-                for (int j = 0; j < numNodes; j++) {
-                    if (!visited[j] && graph.getDistance(currentNode, j) < shortestDistance) {
-                        nextNode = j;
-                        shortestDistance = graph.getDistance(currentNode, j);
+                // Find the nearest unvisited node
+                for (Node node : unvisitedNodes) {
+                    double distance = currentNode.getDistanceTo(node.getId());
+                    if (distance < shortestDistance) {
+                        shortestDistance = distance;
+                        nearestNode = node;
                     }
                 }
-                
-                if (nextNode == -1) break;
 
-                routes.get(i).add(nextNode);
-                visited[nextNode] = true;
-                currentNode = nextNode;
+                if (nearestNode == null) {
+                    break; // No more reachable nodes
+                }
 
+                // Visit the nearest node
+                route.add(nearestNode);
+                unvisitedNodes.remove(nearestNode);
+                currentNode = nearestNode;
                 vehicle.deliverPackage();
             }
 
-            routes.get(i).add(depot);
+            // Return the vehicle to the depot after finishing
+            route.add(depot);
         }
 
-        return routes; 
+        return routes;
     }
 }
