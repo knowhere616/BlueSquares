@@ -39,6 +39,11 @@ public class Vehicle {
         this.currentLoad = capacity;
     }
 
+    // Method to reduce the vehicle's current load after delivery
+    public void deliverPackage() {
+            currentLoad--; 
+    }
+
     // Get vehicle details
     public String getVehicle() {
         return "Capacity: " + capacity + ", Current Load: " + currentLoad;

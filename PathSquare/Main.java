@@ -26,8 +26,7 @@ public class Main {
         Fleet fleet = new Fleet();
         fleet.initializeFleet(scanner);
 
-        System.out.print("Enter the number of vehicles: ")
-        int numVehicles = scanner.nextInt();
+        int numVehicles = fleet.getVehicles().size();
 
         System.out.print("Enter the depot node (starting point): ");
         int depot = scanner.nextInt();
@@ -45,6 +44,7 @@ public class Main {
             return;
         }
         
+        // Το όρισμα numVehicles θέλει αλλαγη; - fleet ή vehicle;
         List<List<Integer>> routes = algorithm.solve(graph, numVehicles, depot);
         System.out.println("Optimized Routes: " + routes);
         scanner.close(); // we close the scanner after the last input!
