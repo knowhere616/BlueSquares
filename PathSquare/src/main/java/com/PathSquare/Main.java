@@ -1,3 +1,4 @@
+package com.PathSquare;
 import java.util.*;
 
 public class Main {

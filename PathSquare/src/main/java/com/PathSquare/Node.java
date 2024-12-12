@@ -1,3 +1,4 @@
+package com.PathSquare;
 import java.util.HashMap;
 import java.util.Map;
 
