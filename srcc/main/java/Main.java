@@ -112,10 +112,11 @@ public class Main {
         int numItems = getPositiveInteger(scanner);
 
         // Input the weights of the items
-        List<Integer> items = new ArrayList<>();
+        List<BinPacking.Item> items = new ArrayList<>();
         for (int i = 0; i < numItems; i++) {
             System.out.print("Enter weight of item " + (i + 1) + ": ");
-            items.add(getPositiveInteger(scanner));
+            int weight = getPositiveInteger(scanner);
+            items.add(new BinPacking.Item(weight, "Item " + (i + 1)));
         }
 
         // Input the bin capacity
@@ -163,3 +164,4 @@ public class Main {
         }
     }
 }
+
