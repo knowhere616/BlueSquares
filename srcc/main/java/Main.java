@@ -36,20 +36,49 @@ public class Main {
     private static void solveVRP(Scanner scanner) {
         // User input for nodes
         List<Node> nodes = new ArrayList<>();
-        System.out.println("Enter the number of nodes: ");
+        System.out.println("Enter the number of nodes (including depot): ");
         int nodeCount = getPositiveInteger(scanner);
+        // User input for depot
+        System.out.println("Enter the index of the depot (1 to " + nodeCount + "): ");
+        int depotIndex = getPositiveInteger(scanner) - 1;
+        if (depotIndex < 0 || depotIndex >= nodeCount) {
+            System.out.println("Invalid depot index. Setting default depot as node 1.");
+            depotIndex = 0;
+        }
+
+        Node depot = null; // Initialize the depot
 
         for (int i = 0; i < nodeCount; i++) {
+
             System.out.println("Enter name for Node " + (i + 1) + ": ");
             String name = scanner.nextLine();
+
+            // User input for demand of nodes
+            double demand = 0;
+            if (i != depotIndex) {
+                System.out.println("Enter demand for Node " + (i + 1) + ": ");
+                demand = getPositiveDouble(scanner);
+            }
+
             try {
-                Node node = new Node(name, i); // Pass the index of node
+                Node node = new Node(name, i, demand); // Pass the index of node
                 nodes.add(node);
+                if (i == depotIndex) {
+                    depot = node; // Set the depot
+                }
             } catch (IllegalArgumentException e) {
                 System.out.println("Error: " + e.getMessage());
                 i--; // Ask again
             }
         }
+
+        if (depot == null) {
+            throw new IllegalStateException("Depot must be defined!");
+        }
+
+        // Move depot to index 0
+        nodes.remove(depotIndex); // Remove depot from its current position
+        nodes.add(0, depot); // Add depot to the beginning of the list
 
         // Input the fleet size
         int fleetSize = 0;
@@ -90,7 +119,8 @@ public class Main {
                 if (i == j) {
                     distanceMatrix[i][j] = 0; // Distance from node to itself is 0
                 } else if (i < j) {
-                    System.out.println("Enter the distance between " + nodes.get(i).getName() + " and " + nodes.get(j).getName() + ": ");
+                    System.out.println("Enter the distance between " + nodes.get(i).getName() + " and "
+                            + nodes.get(j).getName() + ": ");
                     distanceMatrix[i][j] = getPositiveDouble(scanner);
                     distanceMatrix[j][i] = distanceMatrix[i][j]; // Symmetric distance
                 }
@@ -101,6 +131,9 @@ public class Main {
         Fleet fleet = new Fleet(fleetSize);
         VRP vrp = new VRP(nodes, fleet, vehicles);
         vrp.setDistanceMatrix(distanceMatrix); // Set the distance matrix for the VRP solver
+
+        // Set depot explicitly if required by your design
+        System.out.println("\nDepot is set to: " + depot.getName());
 
         // Solve the VRP
         vrp.solve();
