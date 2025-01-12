@@ -31,14 +31,3 @@ public class NodeTest {
         assertEquals(-74.0060, node.getLongitude());
     }
 }
-
-
-
-
-
-
-
-
-
-
-}   
