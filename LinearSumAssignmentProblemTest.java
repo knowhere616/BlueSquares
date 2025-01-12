@@ -1,6 +1,3 @@
-package com.PathSquare;
-
-import org.junit.jupiter.api.Test;
 import java.util.Scanner;
 
 public class LinearSumAssignmentProblemTest {
@@ -58,7 +55,7 @@ public class LinearSumAssignmentProblemTest {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the size of the cost matrix (matrixSize): ")
         int matrixSize = scanner.nextInt();
-        LinearSumAssignmentProblem.solveLinearSumAssignment(matrixSIze, scanner);
-        scanner.close;
+        LinearSumAssignmentProblem.solveLinearSumAssignment(matrixSize, scanner);
+        scanner.close();
     }
 }
