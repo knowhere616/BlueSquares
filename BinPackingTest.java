@@ -1,7 +1,3 @@
-package com.PathSquare;
-
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +7,7 @@ public class BinPackingTest {
         
         //Case 1
         List<BinPacking.Item> items = new ArrayList<>();
-        items.add(new Binpacking.Item(4, "Item1"));
+        items.add(new BinPacking.Item(4, "Item1"));
         items.add(new BinPacking.Item(8, "Item2"));
         items.add(new BinPacking.Item(1, "Item3"));
         items.add(new BinPacking.Item(6, "Item5"));
@@ -25,7 +21,7 @@ public class BinPackingTest {
         items.clear();
         items.add(new BinPacking.Item(2, "Item1"));
         items.add(new BinPacking.Item(3, "Item2"));
-        items.add(new BinPacking.item(4, "Item3"));
+        items.add(new BinPacking.Item(4, "Item3"));
 
         binCapacity = 20;
         System.out.println("\nCase 2: All items in one bin")

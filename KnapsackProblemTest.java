@@ -1,7 +1,3 @@
-package com.PathSquare;
-
-import org.junit.jupiter.api.Test;
-
 public class KnapsackProblemTest {
     
     public static void main(String[] args) {

@@ -53,7 +53,7 @@ public class LinearSumAssignmentProblemTest {
         //Case 5: Interactive Case
         System.out.println("Case 5: Interactive case");
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the size of the cost matrix (matrixSize): ")
+        System.out.println("Enter the size of the cost matrix (matrixSize): ");
         int matrixSize = scanner.nextInt();
         LinearSumAssignmentProblem.solveLinearSumAssignment(matrixSize, scanner);
         scanner.close();
