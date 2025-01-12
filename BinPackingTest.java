@@ -24,7 +24,7 @@ public class BinPackingTest {
         items.add(new BinPacking.Item(4, "Item3"));
 
         binCapacity = 20;
-        System.out.println("\nCase 2: All items in one bin")
+        System.out.println("\nCase 2: All items in one bin");
         bins = binPacking.solveBinPacking(items, binCapacity);
         printBins(bins);
 
