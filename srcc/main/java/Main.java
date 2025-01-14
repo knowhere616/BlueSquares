@@ -43,97 +43,144 @@ public class Main {
        }
    }
    private static void solveVRP(Scanner scanner) {
-       // User input for nodes
-       List<Node> nodes = new ArrayList<>();
-       System.out.println("Enter the number of nodes (including depot): ");
-       int nodeCount = getPositiveInteger(scanner);
-       // User input for depot
-       System.out.println("Enter the index of the depot (1 to " + nodeCount + "): ");
-       int depotIndex = getPositiveInteger(scanner) - 1;
-       if (depotIndex < 0 || depotIndex >= nodeCount) {
-           System.out.println("Invalid depot index. Setting default depot as node 1.");
-           depotIndex = 0;
-       }
-       Node depot = null; // Initialize the depot
-       for (int i = 0; i < nodeCount; i++) {
-           System.out.println("Enter name for Node " + (i + 1) + ": ");
-           String name = scanner.nextLine();
-           // User input for demand of nodes
-           double demand = 0;
-           if (i != depotIndex) {
-               System.out.println("Enter demand for Node " + (i + 1) + ": ");
-               demand = getPositiveDouble(scanner);
-           }
-           try {
-               Node node = new Node(name, i, demand); // Pass the index of node
-               nodes.add(node);
-               if (i == depotIndex) {
-                   depot = node; // Set the depot
-               }
-           } catch (IllegalArgumentException e) {
-               System.out.println("Error: " + e.getMessage());
-               i--; // Ask again
-           }
-       }
-       if (depot == null) {
-           throw new IllegalStateException("Depot must be defined!");
-       }
-       // Move depot to index 0
-       nodes.remove(depotIndex); // Remove depot from its current position
-       nodes.add(0, depot); // Add depot to the beginning of the list
-       // Input the fleet size
-       int fleetSize = 0;
-       boolean validFleet = false;
-       while (!validFleet) {
-           System.out.println("Enter the number of vehicles (positive integer): ");
-           fleetSize = getPositiveInteger(scanner);
-           try {
-               Fleet fleet = new Fleet(fleetSize);
-               validFleet = true;
-           } catch (IllegalArgumentException e) {
-               System.out.println("Error: " + e.getMessage());
-           }
-       }
-       // Input vehicle capacity
-       List<Vehicle> vehicles = new ArrayList<>();
-       for (int i = 0; i < fleetSize; i++) {
-           boolean validCapacity = false;
-           while (!validCapacity) {
-               System.out.println("Enter capacity for Vehicle " + (i + 1) + ": ");
-               double capacity = getPositiveDouble(scanner);
-               try {
-                   Vehicle vehicle = new Vehicle(capacity);
-                   vehicles.add(vehicle);
-                   validCapacity = true;
-               } catch (IllegalArgumentException e) {
-                   System.out.println("Error: " + e.getMessage());
-               }
-           }
-       }
-       // Manually input distance matrix (symmetric distances)
-       double[][] distanceMatrix = new double[nodeCount][nodeCount];
-       System.out.println("Enter the distance matrix (symmetric distances):");
-       for (int i = 0; i < nodeCount; i++) {
-           for (int j = 0; j < nodeCount; j++) {
-               if (i == j) {
-                   distanceMatrix[i][j] = 0; // Distance from node to itself is 0
-               } else if (i < j) {
-                   System.out.println("Enter the distance between " + nodes.get(i).getName() + " and "
-                           + nodes.get(j).getName() + ": ");
-                   distanceMatrix[i][j] = getPositiveDouble(scanner);
-                   distanceMatrix[j][i] = distanceMatrix[i][j]; // Symmetric distance
-               }
-           }
-       }
-       // Creating fleet and VRP objects
-       Fleet fleet = new Fleet(fleetSize);
-       VRP vrp = new VRP(nodes, fleet, vehicles);
-       vrp.setDistanceMatrix(distanceMatrix); // Set the distance matrix for the VRP solver
-       // Set depot explicitly if required by your design
-       System.out.println("\nDepot is set to: " + depot.getName());
-       // Solve the VRP
-       vrp.solve();
-   }
+    // User input for nodes
+    List<Node> nodes = new ArrayList<>();
+    System.out.println("Enter the number of nodes (including depot): ");
+    int nodeCount = getPositiveInteger(scanner);
+
+    // User input for depot
+    System.out.println("Enter the index of the depot (1 to " + nodeCount + "): ");
+    int depotIndex = getPositiveInteger(scanner) - 1;
+    if (depotIndex < 0 || depotIndex >= nodeCount) {
+        System.out.println("Invalid depot index. Setting default depot as node 1.");
+        depotIndex = 0;
+    }
+    Node depot = null;
+
+    for (int i = 0; i < nodeCount; i++) {
+        System.out.println("Enter name for Node " + (i + 1) + ": ");
+        String name = scanner.nextLine();
+
+        // User input for demand of nodes
+        double demand = 0;
+        if (i != depotIndex) {
+            System.out.println("Enter demand for Node " + (i + 1) + ": ");
+            demand = getPositiveDouble(scanner);
+        }
+
+        try {
+            Node node = new Node(name, i, demand); // Pass the index of node
+            nodes.add(node);
+            if (i == depotIndex) {
+                depot = node;
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            i--; // Retry input for the same node
+        }
+    }
+    if (depot == null) {
+        throw new IllegalStateException("Depot must be defined!");
+    }
+    // Move depot to index 0
+    nodes.remove(depotIndex);
+    nodes.add(0, depot);
+
+    // Input the fleet size with vehicle capacity validation
+    boolean validFleet = false;
+    List<Vehicle> vehicles = new ArrayList<>();
+    while (!validFleet) {
+        System.out.println("Enter the number of vehicles (positive integer): ");
+        int fleetSize = getPositiveInteger(scanner);
+
+        vehicles.clear(); // Reset vehicles list before attempting to add them
+        boolean validCapacity = true;
+
+        // Collect vehicles with validation
+        for (int i = 0; i < fleetSize; i++) {
+            double capacity = 0;
+            boolean valid = false;
+
+            while (!valid) {
+                System.out.println("Enter capacity for Vehicle " + (i + 1) + ": ");
+                capacity = getPositiveDouble(scanner);
+                if (validateVehicleCapacity(nodes, vehicles, capacity, false)) {
+                    valid = true;
+                    vehicles.add(new Vehicle(capacity));
+                } else {
+                    System.out.println("Vehicle capacity (" + capacity + ") must be at least equal to the minimum node demand.");
+                }
+            }
+        }
+
+        // After all capacities are provided, validate that the largest demand is achievable
+        if (validateVehicleCapacity(nodes, vehicles, 0, true)) {
+            validFleet = true; // Proceed if validation is successful
+        } else {
+            // Inform user and restart loop to re-enter vehicle data
+            System.out.println("Not all node demands can be fulfilled by the available vehicles.");
+            System.out.println("Please re-enter the vehicle numbers and capacities.");
+        }
+    }
+
+    // Now proceed to the VRP solving process since vehicle capacities are valid
+    Fleet fleet = new Fleet(vehicles.size());
+    VRP vrp = new VRP(nodes, fleet, vehicles);
+    vrp.setDistanceMatrix(getDistanceMatrix(scanner, nodes.size(), nodes));
+
+    System.out.println("\nDepot is set to: " + depot.getName());
+    vrp.solve();
+}
+
+// Helper method for validating vehicle capacity:
+private static boolean validateVehicleCapacity(List<Node> nodes, List<Vehicle> vehicles, double capacity, boolean finalCheck) {
+    double minDemand = Double.MAX_VALUE;
+    double maxDemand = Double.MIN_VALUE;
+
+    // Find minimum and maximum node demands (excluding depot)
+    for (Node node : nodes) {
+        if (node.getIndex() != 0) { // Exclude depot
+            minDemand = Math.min(minDemand, node.getDemand());
+            maxDemand = Math.max(maxDemand, node.getDemand());
+        }
+    }
+
+    // Initial capacity check while inputting vehicles (minimum demand):
+    if (!finalCheck) {
+        return capacity >= minDemand;
+    }
+
+    // Final check: Ensure that at least one vehicle can handle the maximum demand
+    boolean canHandleMaxDemand = false;
+    for (Vehicle vehicle : vehicles) {
+        if (vehicle.getCapacity() >= maxDemand) {
+            canHandleMaxDemand = true;
+            break;
+        }
+    }
+
+    return canHandleMaxDemand;
+}
+
+// Method to get distance matrix
+private static double[][] getDistanceMatrix(Scanner scanner, int nodeCount, List<Node> nodes) {
+    double[][] distanceMatrix = new double[nodeCount][nodeCount];
+    System.out.println("Enter the distance matrix (symmetric distances):");
+    for (int i = 0; i < nodeCount; i++) {
+        for (int j = 0; j < nodeCount; j++) {
+            if (i == j) {
+                distanceMatrix[i][j] = 0; // Distance from node to itself is 0
+            } else if (i < j) {
+                System.out.println("Enter the distance between " + nodes.get(i).getName() + " and " +
+                        nodes.get(j).getName() + ": ");
+                distanceMatrix[i][j] = getPositiveDouble(scanner);
+                distanceMatrix[j][i] = distanceMatrix[i][j]; // Symmetric distance
+            }
+        }
+    }
+    return distanceMatrix;
+}
+
    private static void solveBinPacking(Scanner scanner) {
        // Input the number of items
        System.out.print("Enter the number of items: ");
@@ -246,4 +293,5 @@ private static void solveShortestPath(Scanner scanner) {
            }
        }
    }
+   
 }

@@ -70,7 +70,7 @@ public class VRP {
     }
 
     // Nearest Neighbor Algorithm to construct a simple route for each vehicle
-   // Nearest Neighbor Algorithm to construct a route for each vehicle
+// Nearest Neighbor Algorithm to construct a route for each vehicle
 private List<Node> nearestNeighbor(int vehicleIndex) {
     Vehicle vehicle = vehicles.get(vehicleIndex);
     Node depot = nodes.get(0);
