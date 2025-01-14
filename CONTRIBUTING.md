@@ -1,5 +1,5 @@
 
-# Contributing to BlueSquars
+# Contributing to BlueSquares
 
 ## Welcome!
 
