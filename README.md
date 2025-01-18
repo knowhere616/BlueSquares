@@ -15,7 +15,7 @@ mvn clean install
 
 Για να εκτελέσετε το πρόγραμμα, χρησιμοποιήστε την ακόλουθη εντολή από τον φάκελο του έργου:
 ```bash
-java -jar target/BlueSquares.jar
+java -jar target/VRPProject-1.0-SNAPSHOT.jar
 ```
 
 ---
